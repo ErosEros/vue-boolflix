@@ -1,8 +1,13 @@
 <template>
   <div id="app">
-  <div>
-    <input type="text" v-model="query"/> <button @click="search" >CERCA</button>
-  </div>
+    <div>
+      <input type="text" v-model="query"/> <button @click="search" >CERCA</button>
+    </div>
+    <div class="container">
+      <div v-for="movie in movies" :key="movie.id">
+        {{movie.title}}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -15,7 +20,8 @@ export default {
   name: 'App',
   data(){
     return {
-      query: ''
+      query: '',
+      movies: '',
     }
   },
   // mounted(){
@@ -30,6 +36,9 @@ export default {
     axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${textToSearch}&language=it-IT`)
     .then((response)=>{
       console.log(response);
+      if (response.status === 200){
+            this.movies = response.data.results;
+          }       
     })
     .catch(error =>{
       console.log(error.message)
