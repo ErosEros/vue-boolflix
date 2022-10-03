@@ -4,8 +4,17 @@
       <input type="text" v-model="query"/> <button @click="search" >CERCA</button>
     </div>
     <div class="container">
-      <div v-for="movie in movies" :key="movie.id">
-        {{movie.title}}
+      <div class="card" v-for="movie in movies" :key="movie.id">
+        <p>Title: {{movie.title}}</p> 
+        <p>Original Title: {{movie.original_title}}</p> 
+        <p>Vote: {{movie.vote_average}}</p>
+        <p>language: {{movie.original_language}}</p>
+        <!-- <p>Language: 
+          <img class="flag" 
+               :src="getFlag(movie.original_language)"
+               :alt="movie.original_language"
+               @error="fixImageError($event)" />     
+        </p>   -->
       </div>
     </div>
   </div>
@@ -53,5 +62,8 @@ export default {
 
 <style lang="scss">
   @import '~bootstrap/scss/bootstrap';
-
+.card {
+  border: 1px solid red;
+  margin: 5px;
+}
 </style>
