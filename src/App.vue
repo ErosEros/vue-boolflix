@@ -9,12 +9,11 @@
         <p>Original Title: {{movie.original_title}}</p> 
         <p>Vote: {{movie.vote_average}}</p>
         <p>language: {{movie.original_language}}</p>
-        <!-- <p>Language: 
+        <p>Language: 
           <img class="flag" 
                :src="getFlag(movie.original_language)"
-               :alt="movie.original_language"
-               @error="fixImageError($event)" />     
-        </p>   -->
+               :alt="movie.original_language"/>     
+        </p>  
       </div>
     </div>
   </div>
@@ -52,10 +51,21 @@ export default {
     .catch(error =>{
       console.log(error.message)
     })
+  },
+  getFlag(country){
+      switch(country){
+        case 'en':{
+          country = 'gb';
+          break;
+        }
+        case 'ja':{
+          country = 'jp'
+          break;
+        }
+      }
+      return `https://flagicons.lipis.dev/flags/1x1/${country}.svg`
+    },
   }
-
-  }
-
 
 }
 </script>
@@ -65,5 +75,8 @@ export default {
 .card {
   border: 1px solid red;
   margin: 5px;
+}
+.flag{
+  max-width: 20px;
 }
 </style>
