@@ -1,82 +1,69 @@
 <template>
   <div id="app">
     <div>
-      <input type="text" v-model="query"/> <button @click="search" >CERCA</button>
+      <input type="text" v-model="query"/> <button @click="search">Cerca</button>
     </div>
     <div class="container">
-      <div class="card" v-for="movie in movies" :key="movie.id">
-        <p>Title: {{movie.title}}</p> 
-        <p>Original Title: {{movie.original_title}}</p> 
-        <p>Vote: {{movie.vote_average}}</p>
-        <p>language: {{movie.original_language}}</p>
-        <p>Language: 
-          <img class="flag" 
-               :src="getFlag(movie.original_language)"
-               :alt="movie.original_language"/>     
-        </p>  
-      </div>
+      <h2>Movies</h2>
+      <MovieCardComponent v-for="movie in movies" :key="movie.id" :movie="movie"  />
+      <h2>TV Series</h2>
+      <TvSerieCardComponent v-for="tvSerie in tvSeries" :key="tvSerie.id" :tv="tvSerie"  />
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import { apiKey } from './components/env';
+import { apiKey } from '@/env'
 
+import MovieCardComponent from '@/components/MovieCardComponent.vue'
+import TvSerieCardComponent from '@/components/TvSerieCardComponent.vue'
 
 export default {
   name: 'App',
   data(){
     return {
       query: '',
-      movies: '',
+      movies: [],
+      tvSeries: [],
+      apiUrl: 'https://api.themoviedb.org/3/'
     }
   },
-  // mounted(){
-  //   this.queryApi('ritorno al fut');
-  // },
-  methods: {
+  methods:{
     search(){
       this.queryApi(this.query);
     },
-
     queryApi(textToSearch){
-    axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${textToSearch}&language=it-IT`)
-    .then((response)=>{
-      console.log(response);
-      if (response.status === 200){
-            this.movies = response.data.results;
-          }       
-    })
-    .catch(error =>{
-      console.log(error.message)
-    })
-  },
-  getFlag(country){
-      switch(country){
-        case 'en':{
-          country = 'gb';
-          break;
-        }
-        case 'ja':{
-          country = 'jp'
-          break;
-        }
-      }
-      return `https://flagicons.lipis.dev/flags/1x1/${country}.svg`
-    },
-  }
+      const params = `?api_key=${apiKey}&query=${textToSearch}&language=it-IT`
 
+      axios.get(`${this.apiUrl}search/movie${params}`)
+        .then((response)=>{
+          this.movies = this.getDataFromApiResponse(response);  
+        })
+        .catch(error=> {
+          console.log(error.message)
+        });
+      axios.get(`${this.apiUrl}search/tv${params}`)
+        .then((response)=>{
+           this.tvSeries = this.getDataFromApiResponse(response);  
+        })
+        .catch(error=> {
+          console.log(error.message)
+        });
+    },
+    getDataFromApiResponse(response){
+      console.log(response);
+      return response.status === 200? response.data.results : []    
+    }
+  },
+  components:{
+    MovieCardComponent,
+    TvSerieCardComponent
+  }
 }
 </script>
 
 <style lang="scss">
-  @import '~bootstrap/scss/bootstrap';
-.card {
-  border: 1px solid red;
-  margin: 5px;
-}
-.flag{
-  max-width: 20px;
-}
+@import '~bootstrap/scss/bootstrap';
+
 </style>
